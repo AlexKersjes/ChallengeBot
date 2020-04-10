@@ -4,11 +4,19 @@ const Challenge = require('./challenge.js');
 const dotenv = require('dotenv');
 dotenv.config();
 // eslint-disable-next-line no-var
-const challengeChannelId = process.env.CHANNEL;
+const challengeChannelId = process.env.CHALLENGECHANNEL;
 let challengeChannel;
 const prefix = process.env.PREFIX;
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+
+// load in Scores, Themes, Sizes, Palettes
+client.data = { Scores : [], Themes : [], Restrictions : [], Palettes : [] };
+
+if (fs.exists('data.json'))
+{
+	client.data = JSON.parse(fs.readFileSync('data.json'));
+}
 
 importCommands('commands');
 
@@ -22,11 +30,50 @@ client.once('ready', async () =>
 
 client.on('message', message =>
 {
+	// commands in the admin channel
 	console.log(message);
-	if(message.cleanContent[0] === prefix && message.member.hasPermission('ADMINISTRATOR') && !message.author.bot)
+	if(message.channel.id == process.env.ADMINCHANNEL && message.member.hasPermission('ADMINISTRATOR') && !message.author.bot)
 	{
-		// admin commands go here
+		const args = message.content.split(/ +/);
+		const commandName = args.shift().toLowerCase();
+		const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+		if(!command) { return message.channel.send('Command not found.'); }
+		try
+		{
+			command.execute(message, args, client);
+		}
+		catch (error)
+		{
+			console.error(error);
+			message.channel.send(`Error: ${error.message}`);
+		}
 	}
+	// non-admin commands via dm
+	else if (message.channel.type === 'dm' && !message.author.bot)
+	{
+		const args = message.content.split(/ +/);
+		let commandName;
+		try { commandName = args.shift().toLowerCase(); }
+		catch { commandName = 'submit'; }
+
+		// Dynamic Commands
+		const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+		if(!command) { return message.channel.send('Unknown command. Try "help".'); }
+		if(command.admin) { return message.channel.send('That command is unavailable.'); }
+
+		// Command Execution
+		try
+		{
+			command.execute(message, args, client);
+		}
+		catch (error)
+		{
+			console.error(error);
+			message.channel.send(`Error: ${error.message}`);
+		}
+
+	}
+	// submisssions can be done in any channel by tagging the bot and attaching an image
 	else if (message.mentions.has(client.user) && message.cleanContent[0] === '@' && !message.author.bot)
 	{
 		if(!message.attachments.first())
@@ -51,23 +98,7 @@ client.on('message', message =>
 			if (now < expirationTime)
 			{
 				const timeLeft = (expirationTime - now);
-				let emoji;
-				switch (12 - Math.floor(12 * timeLeft / cooldownAmount))
-				{
-				case 1: emoji = '🕐'; break;
-				case 2: emoji = '🕑'; break;
-				case 3: emoji = '🕒'; break;
-				case 4: emoji = '🕓'; break;
-				case 5: emoji = '🕔'; break;
-				case 6: emoji = '🕕'; break;
-				case 7: emoji = '🕖'; break;
-				case 8: emoji = '🕗'; break;
-				case 9: emoji = '🕘'; break;
-				case 10: emoji = '🕙'; break;
-				case 11: emoji = '🕚'; break;
-				case 12: emoji = '🕛'; break;
-				}
-				message.react(emoji);
+				message.channel.send(`You cannot use this command for another ${timeLeft / 1000} seconds.`);
 				return;
 			}
 		}
@@ -81,30 +112,6 @@ client.on('message', message =>
 			.setDescription(message.member ? `by **${message.member.displayName}**` : `by **${message.author.username}**`)
 			.setColor(message.member ? message.member.displayColor : '#000000');
 		challengeChannel.send({ embed: embed });
-	}
-	else if (message.channel.type === 'dm' && !message.author.bot)
-	{
-		const args = message.content.split(/ +/);
-		let commandName;
-		try { commandName = args.shift().toLowerCase(); }
-		catch { commandName = 'submit'; }
-
-		// Dynamic Commands
-		const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-		if(!command) { return message.channel.send('Unknown command. Try "help".'); }
-		if(command.admin) { return message.channel.send('That command is unavailable.'); }
-
-		// Command Execution
-		try
-		{
-			command.execute(message, args, client);
-		}
-		catch (error)
-		{
-			console.error(error);
-			message.channel.send(`Error: ${error.message}`);
-		}
-
 	}
 
 });
