@@ -1,10 +1,10 @@
 module.exports = {
-	name: 'paletteadd',
+	name: 'addpalette',
 	description: 'Add a palette.',
 	admin: 'true',
 	execute(message, args, client)
 	{
-		if(!message.embeds.first())
+		if(!message.attachments.first())
 		{
 			return message.channel.send('Attach a palette image.');
 		}
@@ -14,8 +14,8 @@ module.exports = {
 		{
 			return message.channel.send('Give the palette a name.');
 		}
-		palette.url = message.embeds.first().url;
-		client.data.Themes.push(palette);
-		message.channel.send('added theme : ' + palette);
+		palette.url = message.attachments.first().url;
+		client.data.Palettes.push(palette);
+		message.channel.send('added palette : ' + palette.name);
 	},
 };

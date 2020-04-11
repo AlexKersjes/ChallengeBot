@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'themeadd',
+	name: 'addtheme',
 	description: 'Add a theme.',
 	admin: 'true',
 	execute(message, args, client)

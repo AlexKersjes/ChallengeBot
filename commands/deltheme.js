@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'themedel',
+	name: 'deltheme',
 	description: 'Delete a theme.',
 	admin: 'true',
 	execute(message, args, client)

@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'paletteel',
+	name: 'delpalette',
 	description: 'Delete a palette.',
 	admin: 'true',
 	execute(message, args, client)

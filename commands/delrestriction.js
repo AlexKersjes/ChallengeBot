@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'restrictiondel',
+	name: 'delrestriction',
 	description: 'Delete a restriction.',
 	admin: 'true',
 	execute(message, args, client)

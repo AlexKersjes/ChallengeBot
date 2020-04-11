@@ -1,21 +1,21 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const Challenge = require('./challenge.js');
 const dotenv = require('dotenv');
 dotenv.config();
-// eslint-disable-next-line no-var
-const challengeChannelId = process.env.CHALLENGECHANNEL;
-let challengeChannel;
-const prefix = process.env.PREFIX;
+
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-// load in Scores, Themes, Sizes, Palettes
-client.data = { Scores : [], Themes : [], Restrictions : [], Palettes : [] };
+const challengeChannelId = process.env.CHALLENGECHANNEL;
+client.challengeChannel;
 
-if (fs.exists('data.json'))
+// load in Scores, Themes, Sizes, Palettes
+client.data = { Scores : {}, Themes : [], Restrictions : [], Palettes : [], Auto : true };
+client.CurrentChallenge = null;
+
+if (fs.existsSync('./data.json'))
 {
-	client.data = JSON.parse(fs.readFileSync('data.json'));
+	client.data = JSON.parse(fs.readFileSync('./data.json'));
 }
 
 importCommands('commands');
@@ -24,14 +24,12 @@ client.cooldowns = new Discord.Collection();
 
 client.once('ready', async () =>
 {
-	challengeChannel = await client.channels.fetch(challengeChannelId);
-	console.log('Ready');
+	client.challengeChannel = await client.channels.fetch(challengeChannelId);
 });
 
 client.on('message', message =>
 {
 	// commands in the admin channel
-	console.log(message);
 	if(message.channel.id == process.env.ADMINCHANNEL && message.member.hasPermission('ADMINISTRATOR') && !message.author.bot)
 	{
 		const args = message.content.split(/ +/);
@@ -111,7 +109,11 @@ client.on('message', message =>
 			.setTitle(message.content.indexOf(' ') == -1 ? 'Untitled' : message.content.slice(message.content.indexOf(' ')))
 			.setDescription(message.member ? `by **${message.member.displayName}**` : `by **${message.author.username}**`)
 			.setColor(message.member ? message.member.displayColor : '#000000');
-		challengeChannel.send({ embed: embed });
+		client.challengeChannel.send({ embed: embed }).then(m =>
+		{
+			m.react('698339640847106108');
+			client.CurrentChallenge.createListener(m, message.author.id);
+		});
 	}
 
 });

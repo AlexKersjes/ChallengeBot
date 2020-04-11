@@ -1,5 +1,5 @@
 module.exports = {
-	name: 'restrictionadd',
+	name: 'addrestriction',
 	description: 'Add a restriction.',
 	admin: 'true',
 	execute(message, args, client)
@@ -10,6 +10,6 @@ module.exports = {
 		}
 		const restriction = message.cleanContent.split(this.name + ' ')[1];
 		client.data.Restrictions.push(restriction);
-		message.channel.send('added theme : ' + restriction);
+		message.channel.send('added restriction : ' + restriction);
 	},
 };
