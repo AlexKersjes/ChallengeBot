@@ -10,7 +10,7 @@ const challengeChannelId = process.env.CHALLENGECHANNEL;
 client.challengeChannel;
 
 // load in Scores, Themes, Sizes, Palettes
-client.data = { Scores : {}, Themes : [], Restrictions : [], Palettes : [], Auto : true };
+client.data = { Scores : {}, Themes : [], Restrictions : [], Palettes : [], Auto : true, BannedUsers:[] };
 client.CurrentChallenge = null;
 
 if (fs.existsSync('./data.json'))
@@ -72,13 +72,16 @@ client.on('message', message =>
 
 	}
 	// submisssions can be done in any channel by tagging the bot and attaching an image
-	else if (message.mentions.has(client.user) && message.cleanContent[0] === '@' && !message.author.bot)
+	else if (message.mentions.has(client.user) && message.cleanContent[0] === '@' && !message.author.bot && !message.mentions.everyone)
 	{
 		if(!message.attachments.first())
 		{
 			return message.channel.send('Please attach an image to submit an entry to the challenge.');
 		}
-
+		if(client.data.BannedUsers.find(n => n == message.author.id))
+		{
+			return message.channel.send('You are currently banned from submitting to Pixel Challenges.');
+		}
 		if (!client.cooldowns.has('submit'))
 		{
 			client.cooldowns.set('submit', new Discord.Collection());
@@ -96,7 +99,7 @@ client.on('message', message =>
 			if (now < expirationTime)
 			{
 				const timeLeft = (expirationTime - now);
-				message.channel.send(`You cannot use this command for another ${timeLeft / 1000} seconds.`);
+				message.channel.send(`You cannot use this command for another ${Math.floor(timeLeft / 1000)} seconds.`);
 				return;
 			}
 		}
@@ -109,11 +112,19 @@ client.on('message', message =>
 			.setTitle(message.content.indexOf(' ') == -1 ? 'Untitled' : message.content.slice(message.content.indexOf(' ')))
 			.setDescription(message.member ? `by **${message.member.displayName}**` : `by **${message.author.username}**`)
 			.setColor(message.member ? message.member.displayColor : '#000000');
-		client.challengeChannel.send({ embed: embed }).then(m =>
+		if(client.CurrentChallenge.Submissions[message.author.id])
 		{
-			m.react('698339640847106108');
-			client.CurrentChallenge.createListener(m, message.author.id);
-		});
+			client.CurrentChallenge.Submissions[message.author.id].edit(embed);
+		}
+		else
+		{
+			client.challengeChannel.send({ embed: embed }).then(m =>
+			{
+				m.react('698339640847106108');
+				client.CurrentChallenge.createListener(m, message.author.id);
+				client.Submissions[message.author.id] = m;
+			});
+		}
 	}
 
 });

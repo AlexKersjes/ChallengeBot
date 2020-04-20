@@ -3,10 +3,11 @@ class Challenge
 {
 	constructor(client, options)
 	{
-		this.Name = 'Challenge ' + new Date(Date.now()).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+		this.Name = options.name || 'Challenge ' + new Date(Date.now()).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
 		this.Duration = options.duration || 24;
 		this.Theme = options.theme || this.randomSelect(client.data.Themes);
-		this.Restriction = options.size || this.randomSelect(client.data.Restrictions);
+		this.Restriction = options.restriction || this.randomSelect(client.data.Restrictions);
+		this.Submissions = {};
 		if(options.palette)
 		{
 			this.Palette = client.data.Palettes.find(p => p.name == options.palette);
@@ -22,12 +23,13 @@ class Challenge
 		this.Description = options.description || null;
 		this.Subtotals = {};
 		this.NextChallenge = null;
-		this.Endingtime = Date.now() + 1000 * 60 * 60;
+		this.Endingtime = null;
 	}
 	start(client)
 	{
 		// post challenge start message
 		// start timer
+		this.Endingtime = Date.now() + this.Duration * 60 * 60 * 1000;
 		client.CurrentChallenge = this;
 		const embed = this.createChallengeEmbed();
 		client.challengeChannel.send(embed);
@@ -126,6 +128,19 @@ class Challenge
 			return this.NextChallenge = challenge;
 		}
 		this.NextChallenge.queue(challenge);
+	}
+
+	dequeue(client)
+	{
+		if (this.NextChallenge == null)
+		{
+			return delete client.CurrentChallenge;
+		}
+		if (this.NextChallenge.NextChallenge == null)
+		{
+			return delete this.NextChallenge;
+		}
+		this.NextChallenge.dequeue();
 	}
 }
 module.exports = Challenge;
