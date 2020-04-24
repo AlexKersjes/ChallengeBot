@@ -25,6 +25,7 @@ client.cooldowns = new Discord.Collection();
 client.once('ready', async () =>
 {
 	client.challengeChannel = await client.channels.fetch(challengeChannelId);
+	console.log('Ready');
 });
 
 client.on('message', message =>
