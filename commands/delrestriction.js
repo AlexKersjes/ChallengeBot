@@ -6,5 +6,6 @@ module.exports = {
 	{
 		message.channel.send('deleted restriction : ' + client.data.Restrictions[args[0] - 1]);
 		delete client.data.Restrictions[args[0] - 1];
+		client.data.Restrictions = client.data.Restrictions.filter(m => m != undefined);
 	},
 };

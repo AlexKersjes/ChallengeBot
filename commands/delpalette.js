@@ -5,6 +5,7 @@ module.exports = {
 	execute(message, args, client)
 	{
 		message.channel.send('deleted palette : ' + client.data.Palette[args[0] - 1].name);
-		delete client.data.Restrictions[args[0] - 1];
+		delete client.data.Palette[args[0] - 1];
+		client.data.Palette = client.data.Palette.filter(m => m != undefined);
 	},
 };

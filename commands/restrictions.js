@@ -10,6 +10,6 @@ module.exports = {
 		{
 			string += `${++i}: ${element}\n`;
 		});
-		message.channel.message.send(string);
+		message.channel.send(string);
 	},
 };
