@@ -1,7 +1,7 @@
 const challenge = require('../challenge.js');
 module.exports = {
 	name: 'setcustom',
-	description: 'Set properties for a custom challenge. Use without arguments for more info.',
+	description: 'Set properties for a custom challenge (setcustom without arguments gives more info).',
 	admin: 'true',
 	execute(message, args, client)
 	{
