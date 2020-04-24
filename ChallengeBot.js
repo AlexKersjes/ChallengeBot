@@ -30,7 +30,7 @@ client.once('ready', async () =>
 client.on('message', message =>
 {
 	// commands in the admin channel
-	if(message.channel.id == process.env.ADMINCHANNEL && message.member.hasPermission('ADMINISTRATOR') && !message.author.bot)
+	if(message.channel.id == process.env.ADMINCHANNEL && !message.author.bot)
 	{
 		const args = message.content.split(/ +/);
 		const commandName = args.shift().toLowerCase();
@@ -144,5 +144,5 @@ function importCommands(path)
 	}
 
 }
-
+console.log('logging in');
 client.login(process.env.TOKEN);
