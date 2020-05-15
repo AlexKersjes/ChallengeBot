@@ -48,8 +48,8 @@ class Challenge
 			const minutes = Math.floor(delta / 60) % 60;
 			delta -= minutes * 60;
 			const seconds = delta % 60;
-			console.log(`${days ? days + ':' : ''}${hours}:${minutes} Remaining`);
-			client.user.setActivity(`${days ? days + ':' : ''}${hours}:${minutes} Remaining`);
+			if(minutes == 0) { console.log(`${days ? days + ':' : ''}${hours}:${minutes} Remaining`); }
+			client.user.setActivity(`${days ? days + ' days, ' : ''}${hours}:${minutes} Remaining`);
 		}, 1000 * 60);
 	}
 	finish(client)
@@ -57,7 +57,7 @@ class Challenge
 		// subtotal all collected scores
 		// add scores to totals
 		clearInterval(this.StatusUpdater);
-		client.setActivity('Challenge over!~~');
+		client.user.setActivity('Challenge over!~~');
 		if(client.CurrentChallenge != this)
 		{
 			return;
@@ -100,7 +100,7 @@ class Challenge
 	{
 		const filter = (reaction, user) => !user.bot && reaction.emoji.name == 'upvote';
 		const collector = message.createReactionCollector(filter, { time : this.Endingtime - Date.now() });
-		collector.on('collect', (reaction, user) => { this.Subtotals[userId] = reaction.count; });
+		collector.on('collect', (reaction, user) => { this.Subtotals[userId] = reaction.count - 1; });
 	}
 	/* editScore(userId, value)
 	{
@@ -122,6 +122,7 @@ class Challenge
 		sortable.forEach(score =>
 		{
 			message += `<@${score[0]}>: ${score[1]}\n`;
+			if(!client.data.Scores[score[0]]) {client.data.Scores[score[0]] = 0; }
 			client.data.Scores[score[0]] += score[1];
 		});
 		if(!message)
@@ -150,7 +151,7 @@ class Challenge
 	{
 		if (this.NextChallenge == null)
 		{
-			return delete client.CurrentChallenge;
+			return;
 		}
 		if (this.NextChallenge.NextChallenge == null)
 		{

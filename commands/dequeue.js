@@ -7,7 +7,10 @@ module.exports = {
 	{
 		if(!client.CurrentChallenge)
 		{
-			return message.channel.send('No custom challenge to dequeue.');
+			if(client.CurrentChallenge.NextChallenge == null)
+			{
+				return message.channel.send('No custom challenge to dequeue.');
+			}
 		}
 		client.CurrentChallenge.dequeue(client);
 		message.channel.send('Dequeued.');

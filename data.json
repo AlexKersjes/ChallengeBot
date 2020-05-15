@@ -1,1 +1,36 @@
-{"Scores":{"226766417918296064":null},"Themes":["Piglets","Upp","Crayon"],"Restrictions":["64x64","16x16","4 frame animation"],"Palettes":[{"name":"unseven","url":"https://cdn.discordapp.com/attachments/698315042545860629/698325996637782087/unseven_palette_by_hitokiri_7-d6dvdqv.png"}],"Auto":false,"BannedUsers":[]}
+{
+	"Scores": {
+		"226766417918296064": 2,
+		"211781293640384514" : 31,
+		"187533937294311424" : 10,
+		"384364887083581440" : 38,
+		"256422077010018304" : 6,
+		"566993160278900737" : 14,
+		"285787781194842122" : 31,
+		"460606806238953472" : 10,
+		"134286642843353088" : 21,
+		"204021092803674112" : 22,
+		"194760740110860289" : 21,
+		"227155670342959104" : 10,
+		"364556385452687381" : 12,
+		"225316916426833920" : 19
+	},
+	"Themes": [
+		"Piglets",
+		"Upp",
+		"Crayon"
+	],
+	"Restrictions": [
+		"64x64",
+		"16x16",
+		"4 frame animation"
+	],
+	"Palettes": [
+		{
+			"name": "unseven",
+			"url": "https://cdn.discordapp.com/attachments/698315042545860629/698325996637782087/unseven_palette_by_hitokiri_7-d6dvdqv.png"
+		}
+	],
+	"Auto": false,
+	"BannedUsers": []
+}

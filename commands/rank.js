@@ -8,8 +8,16 @@ module.exports = {
 		{ sortable.push([u, client.data.Scores[u]]); }
 		sortable.sort((a, b) => b[1] - a[1]);
 
-		const rank = sortable.indexOf(a => a[message.user.id]) + 1;
-		const score = client.data.Scores[message.user.id];
+		const object = sortable.filter(o => o[0] == message.author.id);
+		console.log(object);
+		const rank = sortable.indexOf(object[0]) + 1;
+		console.log(rank);
+		if(!client.data.Scores[message.author.id])
+		{
+			message.channel.send('You have not yet participated in challenges.');
+			return client.data.Scores[message.author.id] = 0;
+		}
+		const score = client.data.Scores[message.author.id];
 		let bonusmessage;
 		switch (rank)
 		{

@@ -75,6 +75,10 @@ client.on('message', message =>
 	// submisssions can be done in any channel by tagging the bot and attaching an image
 	else if (message.mentions.has(client.user) && message.cleanContent[0] === '@' && !message.author.bot && !message.mentions.everyone)
 	{
+		if(!client.CurrentChallenge)
+		{
+			return;
+		}
 		if(!message.attachments.first())
 		{
 			return message.channel.send('Please attach an image to submit an entry to the challenge.');
@@ -121,9 +125,10 @@ client.on('message', message =>
 		{
 			client.challengeChannel.send({ embed: embed }).then(m =>
 			{
-				m.react('698339640847106108');
+				console.log(`Submission from ${message.author.username}`);
+				m.react('243907828287275019');
 				client.CurrentChallenge.createListener(m, message.author.id);
-				client.Submissions[message.author.id] = m;
+				client.CurrentChallenge.Submissions[message.author.id] = m;
 			});
 		}
 	}
